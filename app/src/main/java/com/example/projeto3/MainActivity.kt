@@ -8,9 +8,9 @@ import android.media.MediaRecorder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatEditText
+import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +19,7 @@ import kotlin.math.log10
 class MainActivity : AppCompatActivity() {
 
     private lateinit var textTeste : AppCompatTextView
+    private lateinit var textAviso : AppCompatTextView
 
     private val RECORD_AUDIO_PERMISSION_REQUEST_CODE = 1
     private val referencia = 2e-5
@@ -44,6 +45,9 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 textTeste = findViewById(R.id.textTESTE)
                 textTeste.setText(calcularSPL().toString())
+                runOnUiThread {
+                    notify(calcularSPL())
+                }
                 handler.postDelayed(this, 1000)
             }
         }
@@ -107,6 +111,20 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    fun notify(value: Double) {
+        when(value) {
+            in 50.0..100.00  -> textTeste.setTextColor(ContextCompat.getColor(this, R.color.yellow))
+            in 100.0..200.00 -> textTeste.setTextColor(ContextCompat.getColor(this, R.color.red))
+            else -> textTeste.setTextColor(ContextCompat.getColor(this, R.color.blue))
+        }
+        if (value >= 65.00) {
+            textAviso = findViewById(R.id.textAviso)
+            textAviso.visibility = VISIBLE
+        } else {
+            //
         }
     }
 

@@ -1,16 +1,14 @@
 package com.example.projeto3
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
-import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(com.example.projeto3.R.layout.activity_main)
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.RECORD_AUDIO
@@ -43,15 +41,16 @@ class MainActivity : AppCompatActivity() {
         }
         runnable = object: Runnable {
             override fun run() {
-                textTeste = findViewById(R.id.textTESTE)
-                textTeste.setText(calcularSPL().toString())
+                var spl: Double = calcularSPL()
+                textTeste = findViewById(com.example.projeto3.R.id.textTESTE)
+                textTeste.setText(spl.toString())
                 runOnUiThread {
-                    notify(calcularSPL())
+                    textColor(spl)
+                    notify(spl)
                 }
                 handler.postDelayed(this, 1000)
             }
         }
-        handler.post(runnable)
     }
 
     override fun onDestroy() {
@@ -59,6 +58,22 @@ class MainActivity : AppCompatActivity() {
         handler.removeCallbacks(runnable)
     }
 
+    // Manipular resposta do usuário às solicitações de permissão.
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == RECORD_AUDIO_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                handler.post(runnable)
+            } else {
+                // Todo
+            }
+        }
+    }
 
     // Calculo dos dB
 
@@ -95,7 +110,6 @@ class MainActivity : AppCompatActivity() {
         return db
     }
 
-
     fun AppCompatActivity.requestRecordAudioPermission() {
         try {
             if (ContextCompat.checkSelfPermission(
@@ -115,34 +129,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun notify(value: Double) {
-        when(value) {
-            in 50.0..100.00  -> textTeste.setTextColor(ContextCompat.getColor(this, R.color.yellow))
-            in 100.0..200.00 -> textTeste.setTextColor(ContextCompat.getColor(this, R.color.red))
-            else -> textTeste.setTextColor(ContextCompat.getColor(this, R.color.blue))
-        }
+        textColor(value)
         if (value >= 65.00) {
-            textAviso = findViewById(R.id.textAviso)
+            textAviso = findViewById(com.example.projeto3.R.id.textAviso)
             textAviso.visibility = VISIBLE
         } else {
             //
         }
     }
 
-    // Manipular resposta do usuário às solicitações de permissão.
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == RECORD_AUDIO_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Se o usuário permitir o uso do microfone, o app começa a gravar.
-            } else {
-                // Todo
-            }
+    fun textColor(value: Double)
+    {
+        when(value) {
+            in 50.0..100.00  -> textTeste.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.yellow))
+            in 100.0..200.00 -> textTeste.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.red))
+            else -> textTeste.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.blue))
         }
     }
 }

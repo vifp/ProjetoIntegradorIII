@@ -13,11 +13,11 @@
         android:layout_marginBottom="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/textTESTE"
+        app:layout_constraintBottom_toTopOf="@+id/textDB"
         app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textTESTE"
+        android:id="@+id/textDB"
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:text="x dB"
@@ -37,5 +37,5 @@
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textTESTE"/>
+        app:layout_constraintTop_toBottomOf="@+id/textDB"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

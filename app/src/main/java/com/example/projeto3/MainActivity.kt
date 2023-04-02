@@ -7,6 +7,7 @@ import android.media.MediaRecorder
 import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.os.Handler
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
@@ -16,7 +17,7 @@ import kotlin.math.log10
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var textTeste : AppCompatTextView
+    private lateinit var textDB : AppCompatTextView
     private lateinit var textAviso : AppCompatTextView
 
     private val RECORD_AUDIO_PERMISSION_REQUEST_CODE = 1
@@ -32,24 +33,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.projeto3.R.layout.activity_main)
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestRecordAudioPermission()
-        }
-        runnable = object: Runnable {
+        runnable = object : Runnable {
             override fun run() {
                 var spl: Double = calcularSPL()
-                textTeste = findViewById(com.example.projeto3.R.id.textTESTE)
-                textTeste.setText(spl.toString())
+                textDB = findViewById(com.example.projeto3.R.id.textDB)
+                textDB.text = spl.toString()
                 runOnUiThread {
                     textColor(spl)
                     notify(spl)
                 }
                 handler.postDelayed(this, 1000)
             }
+        }
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            handler.post(runnable)
+        }
+        else{
+            requestRecordAudioPermission()
         }
     }
 
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 handler.post(runnable)
             } else {
-                // Todo
+                requestRecordAudioPermission()
             }
         }
     }
@@ -78,7 +78,6 @@ class MainActivity : AppCompatActivity() {
     // Calculo dos dB
 
     fun calcularSPL(): Double {
-
         // Configuaração da gravação de áudio;
         val audioBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT)
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -112,16 +111,8 @@ class MainActivity : AppCompatActivity() {
 
     fun AppCompatActivity.requestRecordAudioPermission() {
         try {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.RECORD_AUDIO),
-                    RECORD_AUDIO_PERMISSION_REQUEST_CODE
-                )
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_PERMISSION_REQUEST_CODE)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -129,21 +120,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun notify(value: Double) {
-        textColor(value)
         if (value >= 65.00) {
             textAviso = findViewById(com.example.projeto3.R.id.textAviso)
             textAviso.visibility = VISIBLE
-        } else {
-            //
+            textAviso.text = "Cuidado! O som do ambiente ultrapassa 65.00dB e pode causar danos a sua audição em longos períodos de exposição."
+        } else if(::textAviso.isInitialized && textAviso.visibility == VISIBLE){
+            textAviso.visibility = INVISIBLE
         }
     }
 
     fun textColor(value: Double)
     {
         when(value) {
-            in 50.0..100.00  -> textTeste.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.yellow))
-            in 100.0..200.00 -> textTeste.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.red))
-            else -> textTeste.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.blue))
+            in 30.0..50.0    -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.blue))
+            in 50.0..100.00  -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.yellow))
+            in 100.0..200.00 -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.red))
+            else -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.purple_200))
         }
     }
 }

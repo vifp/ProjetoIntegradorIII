@@ -10,23 +10,25 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/textDB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textDB"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
+        android:layout_width="144dp"
+        android:layout_height="82dp"
+        android:layout_marginBottom="335dp"
         android:text="x dB"
         android:textAlignment="center"
         android:textSize="40sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textAviso"
@@ -35,7 +37,21 @@
         android:text="Teste"
         android:textSize="30sp"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDB"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textDB"
+        android:gravity="center"/>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="194dp"
+        android:layout_height="144dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginBottom="36dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/textDB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/_f08656ffe339556b0bfe51b545cc79ce8c0e5602ca778a218cb486ec315688b_1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

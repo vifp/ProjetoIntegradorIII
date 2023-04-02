@@ -1,24 +1,30 @@
 package com.example.projeto3
 
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import android.Manifest
 import android.content.pm.PackageManager
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.opengl.Visibility
 import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.os.Handler
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginLeft
 import kotlin.math.log10
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var textDB : AppCompatTextView
     private lateinit var textAviso : AppCompatTextView
+    private lateinit var imagem : AppCompatImageView
 
     private val RECORD_AUDIO_PERMISSION_REQUEST_CODE = 1
     private val referencia = 2e-5
@@ -121,11 +127,14 @@ class MainActivity : AppCompatActivity() {
 
     fun notify(value: Double) {
         if (value >= 65.00) {
+            imagem = findViewById(com.example.projeto3.R.id.imageView3)
             textAviso = findViewById(com.example.projeto3.R.id.textAviso)
             textAviso.visibility = VISIBLE
             textAviso.text = "Cuidado! O som do ambiente ultrapassa 65.00dB e pode causar danos a sua audição em longos períodos de exposição."
+            imagem.visibility = VISIBLE
         } else if(::textAviso.isInitialized && textAviso.visibility == VISIBLE){
             textAviso.visibility = INVISIBLE
+            imagem.visibility = INVISIBLE
         }
     }
 

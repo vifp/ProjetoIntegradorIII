@@ -1,13 +1,11 @@
 package com.example.projeto3
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.Manifest
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.content.pm.PackageManager
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.opengl.Visibility
-import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.os.Handler
 import android.view.View.INVISIBLE
@@ -17,8 +15,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginLeft
 import kotlin.math.log10
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -140,11 +138,16 @@ class MainActivity : AppCompatActivity() {
 
     fun textColor(value: Double)
     {
-        when(value) {
-            in 30.0..50.0    -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.blue))
-            in 50.0..100.00  -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.yellow))
-            in 100.0..200.00 -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.red))
-            else -> textDB.setTextColor(ContextCompat.getColor(this, com.example.projeto3.R.color.purple_200))
+        var lastColor: Int = textDB.currentTextColor
+        var currentColor: Int = when(value) {
+            in 40.0..60.0    -> ContextCompat.getColor(this, com.example.projeto3.R.color.blue)
+            in 60.0..100.00  -> ContextCompat.getColor(this, com.example.projeto3.R.color.yellow)
+            in 100.0..200.00 -> ContextCompat.getColor(this, com.example.projeto3.R.color.red)
+            else -> ContextCompat.getColor(this, com.example.projeto3.R.color.purple_200)
         }
+        var colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), lastColor, currentColor)
+        colorAnimation.duration = 1000
+        colorAnimation.addUpdateListener { animator -> textDB.setTextColor(animator.animatedValue as Int) }
+        colorAnimation.start()
     }
 }

@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var textDB : AppCompatTextView
     private lateinit var textAviso : AppCompatTextView
-    private lateinit var imagem : AppCompatImageView
+    private lateinit var imagemCheck : AppCompatImageView
+    private lateinit var imagemAviso : AppCompatImageView
 
     private val RECORD_AUDIO_PERMISSION_REQUEST_CODE = 1
     private val referencia = 2e-5
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(com.example.projeto3.R.layout.activity_main)
         runnable = object : Runnable {
             override fun run() {
-                var spl: Double = calcularSPL()
+                val spl: Double = calcularSPL()
                 textDB = findViewById(com.example.projeto3.R.id.textDB)
                 textDB.text = spl.toString()
                 runOnUiThread {
@@ -125,27 +126,30 @@ class MainActivity : AppCompatActivity() {
 
     fun notify(value: Double) {
         if (value >= 65.00) {
-            imagem = findViewById(com.example.projeto3.R.id.imageView3)
+            imagemCheck = findViewById(com.example.projeto3.R.id.imageViewCheck)
+            imagemAviso = findViewById(com.example.projeto3.R.id.imageViewWarning)
             textAviso = findViewById(com.example.projeto3.R.id.textAviso)
             textAviso.visibility = VISIBLE
             textAviso.text = "Cuidado! O som do ambiente ultrapassa 65.00dB e pode causar danos a sua audição em longos períodos de exposição."
-            imagem.visibility = VISIBLE
+            imagemCheck.visibility = INVISIBLE
+            imagemAviso.visibility = VISIBLE
         } else if(::textAviso.isInitialized && textAviso.visibility == VISIBLE){
             textAviso.visibility = INVISIBLE
-            imagem.visibility = INVISIBLE
+            imagemAviso.visibility = INVISIBLE
+            imagemCheck.visibility = VISIBLE
         }
     }
 
     fun textColor(value: Double)
     {
-        var lastColor: Int = textDB.currentTextColor
-        var currentColor: Int = when(value) {
+        val lastColor: Int = textDB.currentTextColor
+        val currentColor: Int = when(value) {
             in 40.0..60.0    -> ContextCompat.getColor(this, com.example.projeto3.R.color.blue)
             in 60.0..100.00  -> ContextCompat.getColor(this, com.example.projeto3.R.color.yellow)
             in 100.0..200.00 -> ContextCompat.getColor(this, com.example.projeto3.R.color.red)
             else -> ContextCompat.getColor(this, com.example.projeto3.R.color.purple_200)
         }
-        var colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), lastColor, currentColor)
+        val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), lastColor, currentColor)
         colorAnimation.duration = 1000
         colorAnimation.addUpdateListener { animator -> textDB.setTextColor(animator.animatedValue as Int) }
         colorAnimation.start()

@@ -4,18 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/imageViewCheck"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/textDB"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_btn_speak_now" />
+        app:srcCompat="@drawable/check_circle" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewWarning"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/textDB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/warning" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textDB"
@@ -34,24 +47,14 @@
         android:id="@+id/textAviso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="Teste"
         android:textSize="30sp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDB"
-        android:gravity="center"/>
+        app:layout_constraintTop_toBottomOf="@+id/textDB" />
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="194dp"
-        android:layout_height="144dp"
-        android:layout_marginStart="108dp"
-        android:layout_marginBottom="36dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/textDB"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/_f08656ffe339556b0bfe51b545cc79ce8c0e5602ca778a218cb486ec315688b_1" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

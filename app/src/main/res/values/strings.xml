@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Projeto3</string>
+    <string name="app_name">Barulheira</string>
+    <string name="text_aviso">Cuidado! O som do ambiente ultrapassa 65.00dB e pode causar danos a sua audição em longos períodos de exposição.</string>
 </resources>

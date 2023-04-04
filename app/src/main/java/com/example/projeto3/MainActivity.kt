@@ -2,6 +2,7 @@ package com.example.projeto3
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.icu.text.DecimalFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Build.VERSION_CODES.R
@@ -41,9 +42,18 @@ class MainActivity : AppCompatActivity() {
         }
         runnable = object: Runnable {
             override fun run() {
+<<<<<<< Updated upstream
                 var spl: Double = calcularSPL()
                 textTeste = findViewById(com.example.projeto3.R.id.textTESTE)
                 textTeste.setText(spl.toString())
+=======
+
+                val df = DecimalFormat("#.##")
+                val spl: Double = calcularSPL()
+
+                textDB = findViewById(com.example.projeto3.R.id.textDB)
+                textDB.text = truncate(calcularSPL()) + " dB"
+>>>>>>> Stashed changes
                 runOnUiThread {
                     textColor(spl)
                     notify(spl)
@@ -76,6 +86,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Calculo dos dB
+
+    //Formatar as casas decimais do valor em decibéis.
+    fun truncate(value: Double): String? {
+        val df = DecimalFormat("#.00")
+        return df.format(value)
+    }
 
     fun calcularSPL(): Double {
 

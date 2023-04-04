@@ -17,9 +17,16 @@
         app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
     <androidx.appcompat.widget.AppCompatTextView
+<<<<<<< Updated upstream
         android:id="@+id/textTESTE"
         android:layout_width="200dp"
         android:layout_height="60dp"
+=======
+        android:id="@+id/textDB"
+        android:layout_width="151dp"
+        android:layout_height="104dp"
+        android:layout_marginBottom="335dp"
+>>>>>>> Stashed changes
         android:text="x dB"
         android:textAlignment="center"
         android:textSize="40sp"
@@ -32,10 +39,24 @@
         android:id="@+id/textAviso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+<<<<<<< Updated upstream
         android:text="Teste"
         android:textSize="30sp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textTESTE"/>
+=======
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="Teste"
+        android:textSize="30sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.513"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textDB" />
+
+
+>>>>>>> Stashed changes
 </androidx.constraintlayout.widget.ConstraintLayout>

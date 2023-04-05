@@ -40,14 +40,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.projeto3.R.layout.activity_main)
+        textDB = findViewById(com.example.projeto3.R.id.textDB)
+        textDB.text = 00.0.toString()
         runnable = object : Runnable {
             override fun run() {
                 val spl: Double = calcularSPL()
-                val df = DecimalFormat("#.##")
-
                 textDB = findViewById(com.example.projeto3.R.id.textDB)
-                textDB.setText(truncate(calcularSPL()) + " dB")
                 runOnUiThread {
+                    showText(spl)
                     textColor(spl)
                     notify(spl)
                 }
@@ -84,15 +84,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun truncate(value: Double):
-    String?{
-        val df = DecimalFormat("#.00")
-        return df.format(value)
-    }
-
     // Calculo dos dB
-
-
     fun calcularSPL(): Double {
         // Configuaração da gravação de áudio;
         val audioBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT)
@@ -133,6 +125,18 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun showText(value: Double)
+    {
+        val oldValue = textDB.text.toString().toDouble()
+        val animator = ValueAnimator.ofFloat(oldValue.toFloat(), value.toFloat())
+        animator.duration = 1000
+        animator.addUpdateListener { animation ->
+            val currentValue = animation.animatedValue as Float
+            textDB.text = String.format("%.2f", currentValue.toDouble())
+        }
+        animator.start()
     }
 
     fun notify(value: Double) {

@@ -32,7 +32,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textDB"
-        android:layout_width="144dp"
+        android:layout_width="230dp"
         android:layout_height="82dp"
         android:layout_marginBottom="335dp"
         android:text="x dB"

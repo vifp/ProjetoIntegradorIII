@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.pm.PackageManager
+import android.icu.text.DecimalFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlin.math.log10
+import kotlin.math.truncate
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,8 +43,10 @@ class MainActivity : AppCompatActivity() {
         runnable = object : Runnable {
             override fun run() {
                 val spl: Double = calcularSPL()
+                val df = DecimalFormat("#.##")
+
                 textDB = findViewById(com.example.projeto3.R.id.textDB)
-                textDB.text = spl.toString()
+                textDB.setText(truncate(calcularSPL()) + " dB")
                 runOnUiThread {
                     textColor(spl)
                     notify(spl)
@@ -80,7 +84,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun truncate(value: Double):
+    String?{
+        val df = DecimalFormat("#.00")
+        return df.format(value)
+    }
+
     // Calculo dos dB
+
 
     fun calcularSPL(): Double {
         // Configuaração da gravação de áudio;

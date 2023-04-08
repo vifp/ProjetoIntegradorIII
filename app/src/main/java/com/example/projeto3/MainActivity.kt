@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 
     fun showText(value: Double)
     {
-        val oldValue = textDB.text.toString().toDouble()
+        val oldValue = textDB.text.toString().replace(",", ".").toDouble()
         val animator = ValueAnimator.ofFloat(oldValue.toFloat(), value.toFloat())
         animator.duration = 1000
         animator.addUpdateListener { animation ->
@@ -159,10 +159,9 @@ class MainActivity : AppCompatActivity() {
     {
         val lastColor: Int = textDB.currentTextColor
         val currentColor: Int = when(value) {
-            in 40.0..60.0    -> ContextCompat.getColor(this, com.example.projeto3.R.color.blue)
-            in 60.0..100.00  -> ContextCompat.getColor(this, com.example.projeto3.R.color.yellow)
-            in 100.0..200.00 -> ContextCompat.getColor(this, com.example.projeto3.R.color.red)
-            else -> ContextCompat.getColor(this, com.example.projeto3.R.color.purple_200)
+            in 00.0..65.0    -> ContextCompat.getColor(this, com.example.projeto3.R.color.green)
+            in 65.0..200.00  -> ContextCompat.getColor(this, com.example.projeto3.R.color.red)
+            else -> ContextCompat.getColor(this, com.example.projeto3.R.color.light_blue)
         }
         val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), lastColor, currentColor)
         colorAnimation.duration = 1000

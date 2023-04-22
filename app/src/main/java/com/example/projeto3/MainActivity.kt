@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.pm.PackageManager
+import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
@@ -16,6 +17,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlin.math.log10
 import kotlin.math.sqrt
 
@@ -25,12 +28,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var textAviso : AppCompatTextView
     private lateinit var imagemCheck : AppCompatImageView
     private lateinit var imagemAviso : AppCompatImageView
+    private var dataBase = Firebase.firestore
 
     private val recordAudioPermissionRequestCode = 1
     private val referencia = 2e-5
     private val sampleRate = 44100
-    private val channelConfig = android.media.AudioFormat.CHANNEL_IN_MONO
-    private val audioFormat = android.media.AudioFormat.ENCODING_PCM_16BIT
+    private val channelConfig = AudioFormat.CHANNEL_IN_MONO
+    private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
 
     private lateinit var handler: Handler
     private lateinit var runnable: Runnable
@@ -38,10 +42,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.projeto3.R.layout.activity_main)
+        setContentView(R.layout.activity_main)
         handler = Handler(Looper.getMainLooper())
 
-        textDB = findViewById(com.example.projeto3.R.id.textDB)
+        textDB = findViewById(R.id.textDB)
         textDB.text = 00.0.toString()
 
         val permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -71,8 +75,11 @@ class MainActivity : AppCompatActivity() {
         else{
             val average = averageSPL(lastDBs)
             println(average)
-            if(average > 65.00){
-                // TODO Envia para o banco de dados etc...
+            if(average > 30.00){
+                val data = hashMapOf(
+                    "Média" to average.toString()
+                )
+                dataBase.collection("registers").document("average").set(data)
             }
             lastDBs.clear()
         }
@@ -165,11 +172,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun notify(value: Double) {
         if (value >= 65.00) {
-            imagemCheck = findViewById(com.example.projeto3.R.id.imageViewCheck)
-            imagemAviso = findViewById(com.example.projeto3.R.id.imageViewWarning)
-            textAviso = findViewById(com.example.projeto3.R.id.textAviso)
+            imagemCheck = findViewById(R.id.imageViewCheck)
+            imagemAviso = findViewById(R.id.imageViewWarning)
+            textAviso = findViewById(R.id.textAviso)
             textAviso.visibility = VISIBLE
-            textAviso.setText(com.example.projeto3.R.string.text_notify)
+            textAviso.setText(R.string.text_notify)
             imagemCheck.visibility = INVISIBLE
             imagemAviso.visibility = VISIBLE
         } else if(::textAviso.isInitialized && textAviso.visibility == VISIBLE){
@@ -183,9 +190,9 @@ class MainActivity : AppCompatActivity() {
     {
         val lastColor: Int = textDB.currentTextColor
         val currentColor: Int = when(value) {
-            in 00.00..64.99  -> ContextCompat.getColor(this, com.example.projeto3.R.color.green)
-            in 65.00..160.00 -> ContextCompat.getColor(this, com.example.projeto3.R.color.red)
-            else -> ContextCompat.getColor(this, com.example.projeto3.R.color.light_blue)
+            in 00.00..64.99  -> ContextCompat.getColor(this, R.color.green)
+            in 65.00..160.00 -> ContextCompat.getColor(this, R.color.red)
+            else -> ContextCompat.getColor(this, R.color.light_blue)
         }
         val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), lastColor, currentColor)
         colorAnimation.duration = 1000

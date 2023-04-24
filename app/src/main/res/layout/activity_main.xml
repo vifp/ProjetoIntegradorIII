@@ -23,39 +23,50 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginBottom="16dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/textDB"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="invisible"
         app:srcCompat="@drawable/warning" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textDB"
         android:layout_width="230dp"
-        android:layout_height="82dp"
-        android:layout_marginBottom="335dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="315dp"
+        android:layout_marginBottom="254dp"
         android:text="x dB"
         android:textAlignment="center"
         android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textAviso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:gravity="center"
         android:text="Teste"
-        android:layout_marginTop="15dp"
         android:textSize="30sp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textDB" />
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Botão de alerta 😱"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textDB" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

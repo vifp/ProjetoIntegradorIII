@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -12,11 +13,13 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.api.Context
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.math.log10
@@ -39,14 +42,42 @@ class MainActivity : AppCompatActivity() {
     private lateinit var handler: Handler
     private lateinit var runnable: Runnable
     private var lastDBs = mutableListOf<Double>()
+    private lateinit var locationManager: LocationManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         handler = Handler(Looper.getMainLooper())
+        locationManager = getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
 
         textDB = findViewById(R.id.textDB)
         textDB.text = 00.0.toString()
+
+        val myButton = findViewById<Button>(R.id.button)
+        myButton.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            } else {
+                val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if (location != null) {
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+
+                    println(latitude)
+                    println(longitude)
+
+                    val latitudeElongitude = hashMapOf(
+                        "Latitude" to latitude.toString(),
+                        "Longitude" to longitude.toString()
+                    )
+                    dataBase.collection("registers").document("localization").set(latitudeElongitude)
+
+                } else {
+                    println("Localização não pode ser obtida")
+                }
+            }
+        }
 
         val permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
         if(permission == PackageManager.PERMISSION_GRANTED) {
@@ -55,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         else{
             requestRecordAudioPermission()
         }
+
     }
 
     private fun startApp(){
@@ -97,6 +129,8 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         handler.removeCallbacks(runnable)
     }
+
+
 
     // Manipular resposta do usuário às solicitações de permissão.
     override fun onRequestPermissionsResult(

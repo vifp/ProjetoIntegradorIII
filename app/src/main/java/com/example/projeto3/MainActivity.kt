@@ -3,6 +3,7 @@ package com.example.projeto3
 import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.media.AudioFormat
@@ -11,6 +12,7 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Button
@@ -22,8 +24,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.api.Context
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.*
 import kotlin.math.log10
 import kotlin.math.sqrt
 
@@ -243,12 +247,22 @@ class MainActivity : AppCompatActivity() {
         if(lastDBs.size < 5)
             lastDBs.add(spl)
         else{
+            val documentName = "Average"
+            val id = UUID.randomUUID().toString()
             val average = averageSPL(lastDBs)
             if(average > 30.00){
                 val data = hashMapOf(
-                    "Média" to average.toString()
+                    "Data" to FieldValue.serverTimestamp(),
+                    "Média" to average.toFloat()
                 )
-                dataBase.collection("registers").document("average").set(data)
+                dataBase.collection("registers").document(documentName + id)
+                    .set(data)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Valor adicionado ao documento")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Erro ao adicionar o documento.", e)
+                    }
             }
             lastDBs.clear()
         }
@@ -268,7 +282,15 @@ class MainActivity : AppCompatActivity() {
                         "Latitude" to latitude.toString(),
                         "Longitude" to longitude.toString()
                     )
-                    dataBase.collection("registers").document("localization").set(latitudeElongitude)
+                    dataBase.collection("registers")
+                        .add(latitudeElongitude)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d(TAG, "Valor de latitude e longitude adicionado ao bd, id: ${documentReference.id}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(TAG, "Erro ao adicionar documento de latitude e longitude.", e)
+                        }
+
                 } else {
                     Toast.makeText(this, "Localização não pode ser obtida", Toast.LENGTH_SHORT).show()
                 }

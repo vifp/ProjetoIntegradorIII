@@ -15,7 +15,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -23,7 +22,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.api.Context
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -33,11 +31,11 @@ import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var textDB : AppCompatTextView
-    private lateinit var textAviso : AppCompatTextView
-    private lateinit var imagemCheck : AppCompatImageView
-    private lateinit var imagemAviso : AppCompatImageView
-    private lateinit var botaoDoidera : AppCompatButton
+    private lateinit var textDB: AppCompatTextView
+    private lateinit var textAviso: AppCompatTextView
+    private lateinit var imagemCheck: AppCompatImageView
+    private lateinit var imagemAviso: AppCompatImageView
+    private lateinit var botaoDoidera: AppCompatButton
     private var dataBase = Firebase.firestore
 
     private val recordAudioPermissionRequestCode = 1
@@ -56,29 +54,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         handler = Handler(Looper.getMainLooper())
-        locationManager = getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
 
         textDB = findViewById(R.id.textDB)
         textDB.text = 00.0.toString()
         botaoDoidera = findViewById(R.id.button)
 
-        val audiopermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-        val locationpermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-        if(audiopermission == PackageManager.PERMISSION_GRANTED) {
-            if(locationpermission == PackageManager.PERMISSION_GRANTED){
+        val audiopermission =
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+        val locationpermission =
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (audiopermission == PackageManager.PERMISSION_GRANTED) {
+            if (locationpermission == PackageManager.PERMISSION_GRANTED) {
                 startApp()
-            }
-            else{
+            } else {
                 requestFineLocationPermission()
             }
-        }
-        else{
+        } else {
             requestRecordAudioPermission()
         }
     }
 
     // Thread principal
-    private fun startApp(){
+    private fun startApp() {
         emergencyButton()
         var spl: Double
         runnable = object : Runnable {
@@ -93,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Função da thread principal que muda os bagulho da UI
-    private fun updateUI(spl: Double){
+    private fun updateUI(spl: Double) {
         runOnUiThread {
             showText(spl)
             textColor(spl)
@@ -110,8 +109,16 @@ class MainActivity : AppCompatActivity() {
     // Permissão de gravação de áudio
     private fun AppCompatActivity.requestRecordAudioPermission() {
         try {
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), recordAudioPermissionRequestCode)
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.RECORD_AUDIO),
+                    recordAudioPermissionRequestCode
+                )
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -121,8 +128,16 @@ class MainActivity : AppCompatActivity() {
     // Permissão de localização precisa
     private fun AppCompatActivity.requestFineLocationPermission() {
         try {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), fineLocationPermissionRequestCode)
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    fineLocationPermissionRequestCode
+                )
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -142,7 +157,11 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     requestFineLocationPermission()
                 } else {
-                    Toast.makeText(this, "A permissão de gravação de áudio é necessária para o aplicativo funcionar corretamente.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        "A permissão de gravação de áudio é necessária para o aplicativo funcionar corretamente.",
+                        Toast.LENGTH_LONG
+                    ).show()
                     requestRecordAudioPermission()
                 }
             }
@@ -150,7 +169,11 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startApp()
                 } else {
-                    Toast.makeText(this, "A permissão de localização é necessária para o aplicativo funcionar corretamente.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        "A permissão de localização é necessária para o aplicativo funcionar corretamente.",
+                        Toast.LENGTH_LONG
+                    ).show()
                     requestFineLocationPermission()
                 }
             }
@@ -161,10 +184,20 @@ class MainActivity : AppCompatActivity() {
     fun calcularSPL(): Double {
         // Configuaração da gravação de áudio
         val audioBufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             requestRecordAudioPermission()
         }
-        val audioRecord = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig,audioFormat, audioBufferSize)
+        val audioRecord = AudioRecord(
+            MediaRecorder.AudioSource.MIC,
+            sampleRate,
+            channelConfig,
+            audioFormat,
+            audioBufferSize
+        )
         audioRecord.startRecording()
 
         // Captura de 1 segundo de áudio
@@ -176,7 +209,7 @@ class MainActivity : AppCompatActivity() {
 
         // Cálculo do nível de pressão sonora
         var rms = 0.0
-        for (sample in audioSamples){
+        for (sample in audioSamples) {
             rms += sample * sample.toDouble()
         }
         rms = sqrt(rms / audioSamples.size)
@@ -191,14 +224,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Mostra o texto dos decibéis na tela com uma animação
-    private fun showText(value: Double)
-    {
+    private fun showText(value: Double) {
         val oldValue = textDB.text.toString().replace(",", ".").toDouble()
         val animator = ValueAnimator.ofFloat(oldValue.toFloat(), value.toFloat())
         animator.duration = 1000
         animator.addUpdateListener { animation ->
             val currentValue = animation.animatedValue as Float
-            textDB.text = String.format("%.2f", currentValue.toDouble())
+            if (textDB.text == "NaN") {
+                textDB.text = "Pedro"
+            } else {
+                textDB.text = String.format("%.2f", currentValue.toDouble())
+            }
         }
         animator.start()
     }
@@ -213,7 +249,7 @@ class MainActivity : AppCompatActivity() {
             textAviso.setText(R.string.text_notify)
             imagemCheck.visibility = INVISIBLE
             imagemAviso.visibility = VISIBLE
-        } else if(::textAviso.isInitialized && textAviso.visibility == VISIBLE){
+        } else if (::textAviso.isInitialized && textAviso.visibility == VISIBLE) {
             textAviso.visibility = INVISIBLE
             imagemAviso.visibility = INVISIBLE
             imagemCheck.visibility = VISIBLE
@@ -221,11 +257,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Muda a cor do texto de decibéis gradualmente conforme o valor muda
-    private fun textColor(value: Double)
-    {
+    private fun textColor(value: Double) {
         val lastColor: Int = textDB.currentTextColor
-        val currentColor: Int = when(value) {
-            in 00.00..64.99  -> ContextCompat.getColor(this, R.color.green)
+        val currentColor: Int = when (value) {
+            in 00.00..64.99 -> ContextCompat.getColor(this, R.color.green)
             in 65.00..160.00 -> ContextCompat.getColor(this, R.color.red)
             else -> ContextCompat.getColor(this, R.color.light_blue)
         }
@@ -243,17 +278,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Gera a média dos últimos decibéis e verifica se passa um limiar x, se passar envia para o banco de dados
-    private fun generateAverage(spl: Double){
-        if(lastDBs.size < 5)
+    private fun generateAverage(spl: Double) {
+        if (lastDBs.size < 5)
             lastDBs.add(spl)
-        else{
+        else {
             val documentName = "Average"
-            val id = UUID.randomUUID().toString()
+            val id = UUID.randomUUID()
+            val location = getCurrentLocation()
             val average = averageSPL(lastDBs)
-            if(average > 30.00){
+            if (average > 30.00 && location != null) {
+                val (latitude, longitude) = location
                 val data = hashMapOf(
                     "Data" to FieldValue.serverTimestamp(),
-                    "Média" to average.toFloat()
+                    "Média" to average.toFloat(),
+                    "Latitude" to latitude,
+                    "Longitude" to longitude
                 )
                 dataBase.collection("registers").document(documentName + id)
                     .set(data)
@@ -268,38 +307,70 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getCurrentLocation(): Pair<String, String>? {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestFineLocationPermission()
+            return null
+        } else {
+            val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (location != null) {
+                val latitude = location.latitude.toString()
+                val longitude = location.longitude.toString()
+                return Pair(latitude, longitude)
+            }
+        }
+        return null
+    }
+
+
     // Configura o botão de emergência
-    private fun emergencyButton(){
+    private fun emergencyButton() {
         botaoDoidera.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 requestFineLocationPermission()
             } else {
-                val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                val documentName = "Alerts"
+                val id = UUID.randomUUID()
+                val location = getCurrentLocation()
+                val alerta = "Perigo iminente"
                 if (location != null) {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
+                    val (latitude, longitude) = location
                     val latitudeElongitude = hashMapOf(
-                        "Latitude" to latitude.toString(),
-                        "Longitude" to longitude.toString()
+                        "latitude" to latitude,
+                        "longitude" to longitude,
+                        "Data" to FieldValue.serverTimestamp(),
+                        "Alerta" to alerta
                     )
-                    dataBase.collection("registers")
-                        .add(latitudeElongitude)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d(TAG, "Valor de latitude e longitude adicionado ao bd, id: ${documentReference.id}")
+
+                    dataBase.collection("alerts").document(documentName + id)
+                        .set(latitudeElongitude)
+                        .addOnSuccessListener {
+                            Log.d(
+                                TAG,"Valor de latitude e longitude adicionado ao bd."
+                            )
                         }
                         .addOnFailureListener { e ->
                             Log.w(TAG, "Erro ao adicionar documento de latitude e longitude.", e)
                         }
-
                 } else {
-                    Toast.makeText(this, "Localização não pode ser obtida", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Localização não pode ser obtida", Toast.LENGTH_SHORT)
+                        .show()
                 }
+
             }
         }
     }
 }
 
+// RENATo olha a localização de alerta no google rsrsrsrsrs TOdo
 //pedro gay    TODO
-//paiola gay   TODO
 //vai corintia TODO
 //https://imgur.com/a/vFeNnME

@@ -12,7 +12,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/textDB"
+        app:layout_constraintBottom_toTopOf="@+id/textSPL"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,14 +24,14 @@
         android:layout_height="64dp"
         android:layout_marginBottom="16dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/textDB"
+        app:layout_constraintBottom_toTopOf="@+id/textSPL"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/warning" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textDB"
+        android:id="@+id/textSPL"
         android:layout_width="230dp"
         android:layout_height="0dp"
         android:layout_marginTop="315dp"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textAviso"
+        android:id="@+id/alertText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -55,7 +55,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDB" />
+        app:layout_constraintTop_toBottomOf="@+id/textSPL" />
 
     <Button
         android:id="@+id/button"
@@ -66,7 +66,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDB" />
+        app:layout_constraintTop_toBottomOf="@+id/textSPL" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

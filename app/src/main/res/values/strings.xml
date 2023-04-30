@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Barulhera</string>
     <string name="text_notify">Cuidado! O som do ambiente ultrapassa 65.00dB e pode causar danos a sua audição em longos períodos de exposição.</string>
+    <string name="text_audio_permission_denied">A permissão de gravação de áudio é necessária para o aplicativo funcionar corretamente.</string>
+    <string name="text_local_permission_denied">A permissão de localização é necessária para o aplicativo funcionar corretamente.</string>
+    <string name="pedro">pedro</string>
 </resources>

@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private val channelConfig = AudioFormat.CHANNEL_IN_MONO
     private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
     private val splUpdateMS = 1000L
+    private val notifyThreshold = 65.00
 
     private lateinit var handler: Handler
     private lateinit var locationManager: LocationManager
@@ -55,19 +57,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         handler = Handler(Looper.getMainLooper())
-
         locationManager = getSystemService(android.content.Context.LOCATION_SERVICE) as LocationManager
 
-        // Inicializando as views
-        textSPL = findViewById(R.id.textSPL)
-        alertText = findViewById(R.id.alertText)
-        checkImage = findViewById(R.id.imageViewCheck)
-        alertImage = findViewById(R.id.imageViewWarning)
-        emergencyButton = findViewById(R.id.button)
-
-        // Configurando as views
-        textSPL.text = 00.00.toString()
-        emergencyButton()
+        initializeViews()
+        configViews()
 
         // Inicializa o app se tiver as permissões necessárias
         if(hasRecordAudioPermission() && hasFineLocationPermission()){
@@ -81,6 +74,20 @@ class MainActivity : AppCompatActivity() {
                 requestFineLocationPermission()
             }
         }
+    }
+
+    private fun initializeViews(){
+        textSPL = findViewById(R.id.textSPL)
+        alertText = findViewById(R.id.alertText)
+        checkImage = findViewById(R.id.imageViewCheck)
+        alertImage = findViewById(R.id.imageViewWarning)
+        emergencyButton = findViewById(R.id.button)
+    }
+
+    private fun configViews(){
+        textSPL.text = 00.00.toString()
+        alertText.setText(R.string.text_notify)
+        emergencyButton()
     }
 
     // Classe interna que implementa o runnable
@@ -209,12 +216,11 @@ class MainActivity : AppCompatActivity() {
 
     // Notifica o usuário na tela caso o som ambiente for muito alto
     private fun notify(value: Double) {
-        if (value >= 65.00) {
+        if (value >= notifyThreshold && alertText.visibility == INVISIBLE) {
             alertText.visibility = VISIBLE
-            alertText.setText(R.string.text_notify)
-            checkImage.visibility = INVISIBLE
             alertImage.visibility = VISIBLE
-        } else if (::alertText.isInitialized && alertText.visibility == VISIBLE) {
+            checkImage.visibility = INVISIBLE
+        } else if (value < notifyThreshold && alertText.visibility == VISIBLE) {
             alertText.visibility = INVISIBLE
             alertImage.visibility = INVISIBLE
             checkImage.visibility = VISIBLE
@@ -229,6 +235,9 @@ class MainActivity : AppCompatActivity() {
             in 65.00..160.00 -> ContextCompat.getColor(this, R.color.red)
             else -> ContextCompat.getColor(this, R.color.light_blue)
         }
+        if (lastColor == currentColor) {
+            return
+        }
         val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), lastColor, currentColor)
         colorAnimation.duration = 1000
         colorAnimation.addUpdateListener { animation ->
@@ -237,19 +246,20 @@ class MainActivity : AppCompatActivity() {
         colorAnimation.start()
     }
 
-    // Cálculo da média
-    private fun averageSPL(lastVals: List<Double>): Double {
-        return lastVals.sum() / lastVals.size
+    // Cálculo da média, retorna um texto formatado em apenas duas casas decimais
+    private fun averageSPL(lastVals: List<Double>): String {
+        val average = lastVals.sum() / lastVals.size
+        return "%.2f".format(average)
     }
 
     // Verifica se o vetor dos últimos decibéis está cheio e calcula e envia a média para o banco de dados se estiver
     private fun generateAverage(spl: Double) {
-        if (lastSPLs.size < 10)
+        if (lastSPLs.size < 5)
             lastSPLs.add(spl)
         else {
             val id = UUID.randomUUID()
             val location = getCurrentLocation()
-            val average = averageSPL(lastSPLs)
+            val average = averageSPL(lastSPLs).replace(",", ".").toDouble()
             sendAverageToDB(average, location, id)
             lastSPLs.clear()
         }
@@ -259,19 +269,18 @@ class MainActivity : AppCompatActivity() {
     private fun sendAverageToDB(average: Double, location: Pair<String, String>?, id: UUID){
         if (average > 30.00 && location != null) {
             val (latitude, longitude) = location
+            val geoPoint = GeoPoint(latitude.toDouble(), longitude.toDouble())
             val data = hashMapOf(
                 "Data" to FieldValue.serverTimestamp(),
-                "Média" to average.toFloat(),
-                "Latitude" to latitude,
-                "Longitude" to longitude
+                "Média" to average,
+                "Localização" to geoPoint
             )
-            dataBase.collection("registers").document("Average $id")
-                .set(data)
+            dataBase.collection("registers").document("Average $id").set(data)
                 .addOnSuccessListener {
-                    Log.d(TAG, "Valor adicionado ao documento")
+                    Log.d(TAG, "Média adicionada ao documento.")
                 }
                 .addOnFailureListener { e ->
-                    Log.w(TAG, "Erro ao adicionar o documento.", e)
+                    Log.w(TAG, "Erro ao adicionar a média ao documento.", e)
                 }
         }
     }
@@ -327,22 +336,25 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val (latitude, longitude) = location
-        val latitudeElongitude = hashMapOf(
-            "latitude" to latitude,
-            "longitude" to longitude,
+        val geoPoint = GeoPoint(latitude.toDouble(), longitude.toDouble())
+        val data = hashMapOf(
+            "Localização" to geoPoint,
             "Data" to FieldValue.serverTimestamp(),
             "Alerta" to "Perigo iminente"
         )
-        alertsCollection.document("Alerts $id").set(latitudeElongitude).addOnSuccessListener {
-            Log.d("EmergencyButton", "Valor de latitude e longitude adicionado ao bd.")
-        }.addOnFailureListener { e ->
-            Log.w("EmergencyButton", "Erro ao adicionar documento de latitude e longitude.", e)
-            Toast.makeText(this, "Erro ao adicionar documento de latitude e longitude.", Toast.LENGTH_SHORT).show()
-        }
+        alertsCollection.document("Alert $id").set(data)
+            .addOnSuccessListener {
+                Log.d("EmergencyButton", "Localização adicionada ao documento.")
+            }
+            .addOnFailureListener { e ->
+                Log.w("EmergencyButton", "Erro ao adicionar a localização ao documento.", e)
+            }
     }
 }
 
-// oi vini todo TOSO TOdo TEUCU
-//pedro gay    TODO
-//vai corintia TODO
-//https://imgur.com/a/vFeNnME
+
+
+// oi vini todo todotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodotodo
+// pedro gay    TODO
+// vai corintia TODO
+// https://imgur.com/a/vFeNnME

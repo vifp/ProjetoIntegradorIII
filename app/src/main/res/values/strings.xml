@@ -3,5 +3,8 @@
     <string name="text_notify">Cuidado! O som do ambiente ultrapassa 65.00dB e pode causar danos a sua audição em longos períodos de exposição.</string>
     <string name="text_audio_permission_denied">A permissão de gravação de áudio é necessária para o aplicativo funcionar corretamente.</string>
     <string name="text_local_permission_denied">A permissão de localização é necessária para o aplicativo funcionar corretamente.</string>
+    <string name="text_no_location_provider">Nenhum provedor de localização disponível.</string>
+    <string name="text_null_location">Localização não pode ser obtida.</string>
+    <string name="text_button_alert">Botão de alerta 😱</string>
     <string name="pedro">pedro</string>
 </resources>

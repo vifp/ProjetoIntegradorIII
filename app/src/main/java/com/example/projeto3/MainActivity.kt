@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var checkImage: AppCompatImageView
     private lateinit var alertImage: AppCompatImageView
     private lateinit var emergencyButton: AppCompatButton
-    private var dataBase = Firebase.firestore
 
     private val recordAudioPermissionRequestCode = 1
     private val fineLocationPermissionRequestCode = 2
@@ -52,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var handler: Handler
     private lateinit var locationManager: LocationManager
     private var lastSPLs = mutableListOf<Double>()
+    private var dataBase = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     // Classe interna que implementa o runnable
     private inner class SPLRunnable : Runnable {
         override fun run() {
-            val spl = calcularSPL()
+            val spl = calculateSPL()
             generateAverage(spl)
             handler.postDelayed(this, splUpdateMS)
             updateUI(spl)
@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Cálculo dos decibéis
-    fun calcularSPL(): Double {
+    fun calculateSPL(): Double {
         // Configuaração da gravação de áudio
         val audioBufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -296,7 +296,7 @@ class MainActivity : AppCompatActivity() {
 
             // Verificando se há sinal de gps ou de rede
             if (!isGpsEnabled && !isNetworkEnabled) {
-                Toast.makeText(this, "Nenhum provedor de localização disponível", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.text_no_location_provider, Toast.LENGTH_SHORT).show()
                 return null
             } else {
                 if (isNetworkEnabled) {
@@ -332,7 +332,7 @@ class MainActivity : AppCompatActivity() {
     // Envia a localização para o banco de dados
     private fun sendLocationToDB(location: Pair<String, String>?, alertsCollection: CollectionReference, id: UUID){
         if (location == null) {
-            Toast.makeText(this, "Localização não pode ser obtida", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.text_null_location, Toast.LENGTH_SHORT).show()
             return
         }
         val (latitude, longitude) = location

@@ -26,7 +26,6 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/textSPL"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/warning" />
 
@@ -34,15 +33,12 @@
         android:id="@+id/textSPL"
         android:layout_width="230dp"
         android:layout_height="0dp"
-        android:layout_marginTop="315dp"
-        android:layout_marginBottom="254dp"
         android:text="00.00"
         android:textAlignment="center"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/alertText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/alertText"
